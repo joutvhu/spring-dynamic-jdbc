@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
+import org.springframework.data.jdbc.repository.query.StringBasedJdbcQuery;
 import org.springframework.data.jdbc.repository.support.DynamicOpenJdbcQueryLookupStrategy;
 import org.springframework.data.mapping.callback.EntityCallbacks;
 import org.springframework.data.projection.ProjectionFactory;
@@ -28,7 +29,6 @@ import java.lang.reflect.Method;
 public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupStrategy {
     private RelationalMappingContext context;
     private QueryLookupStrategy jdbcQueryLookupStrategy;
-    private BeanFactory beanfactory;
 
     public DynamicJdbcQueryLookupStrategy(
             ApplicationEventPublisher publisher, @Nullable EntityCallbacks callbacks,
@@ -39,15 +39,14 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
         super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration, operations, beanfactory);
         this.context = context;
         this.jdbcQueryLookupStrategy = queryLookupStrategy;
-        this.beanfactory = beanfactory;
     }
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
         if (isDynamicQueryMethod(method)) {
             DynamicJdbcQueryMethod queryMethod = new DynamicJdbcQueryMethod(method, metadata, factory, namedQueries, context);
-            DynamicJdbcRepositoryQuery query = new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper, getConverter());
-            query.setBeanFactory(beanfactory);
+            StringBasedJdbcQuery query = new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper, getConverter());
+            query.setBeanFactory(this.getBeanFactory());
             return query;
         } else return jdbcQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
     }
