@@ -9,10 +9,10 @@ import org.springframework.data.relational.repository.query.RelationalParameterA
 import org.springframework.data.relational.repository.query.RelationalParametersParameterAccessor;
 import org.springframework.data.repository.query.Parameter;
 import org.springframework.data.repository.query.Parameters;
-import org.springframework.data.repository.query.ResultProcessor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.lang.Nullable;
 import org.springframework.util.ObjectUtils;
 
 import java.sql.JDBCType;
@@ -22,25 +22,21 @@ public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
 
     private DynamicJdbcQueryMethod queryMethod;
     private JdbcConverter converter;
-    private RowMapperFactory rowMapperFactory;
+    private RowMapper<?> defaultRowMapper;
 
-    public DynamicStringBasedJdbcQuery(DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapperFactory rowMapperFactory, JdbcConverter converter) {
-        super(queryMethod, operations, rowMapperFactory, converter);
+    public DynamicStringBasedJdbcQuery(DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, @Nullable RowMapper<?> defaultRowMapper, JdbcConverter converter) {
+        super(queryMethod, operations, defaultRowMapper, converter);
 
         this.queryMethod = queryMethod;
         this.converter = converter;
-        this.rowMapperFactory = rowMapperFactory;
+        this.defaultRowMapper = defaultRowMapper;
     }
 
     @Override
     public Object execute(Object[] objects) {
         RelationalParameterAccessor accessor = new RelationalParametersParameterAccessor(getQueryMethod(), objects);
-        ResultProcessor processor = getQueryMethod().getResultProcessor().withDynamicProjection(accessor);
-        JdbcQueryExecution.ResultProcessingConverter converter = new JdbcQueryExecution.ResultProcessingConverter(processor, this.converter.getMappingContext(),
-                this.converter.getEntityInstantiators());
 
-        RowMapper<Object> rowMapper = determineRowMapper(rowMapperFactory.create(resolveTypeToRead(processor)), converter,
-                accessor.findDynamicProjection() != null);
+        RowMapper<Object> rowMapper = determineRowMapper(defaultRowMapper);
 
         JdbcQueryExecution<?> queryExecution = getQueryExecution(queryMethod,
                 determineResultSetExtractor(rowMapper), rowMapper);

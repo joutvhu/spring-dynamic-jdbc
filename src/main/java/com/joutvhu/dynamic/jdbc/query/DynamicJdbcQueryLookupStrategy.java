@@ -15,6 +15,7 @@ import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryLookupStrategy;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
@@ -45,7 +46,8 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
         if (isDynamicQueryMethod(method)) {
             DynamicJdbcQueryMethod queryMethod = new DynamicJdbcQueryMethod(method, metadata, factory, namedQueries, context);
-            StringBasedJdbcQuery query = new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper, getConverter());
+            RowMapper<?> mapper = queryMethod.isModifyingQuery() ? null : createMapper(queryMethod);
+            StringBasedJdbcQuery query = new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), mapper, getConverter());
             query.setBeanFactory(this.getBeanFactory());
             return query;
         } else return jdbcQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);

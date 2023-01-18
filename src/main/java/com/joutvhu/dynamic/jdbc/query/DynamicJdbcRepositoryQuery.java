@@ -8,7 +8,9 @@ import org.springframework.data.jdbc.repository.query.DynamicStringBasedJdbcQuer
 import org.springframework.data.jdbc.repository.query.StringBasedJdbcQuery;
 import org.springframework.data.relational.repository.query.RelationalParameterAccessor;
 import org.springframework.data.repository.query.RepositoryQuery;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.lang.Nullable;
 
 import java.util.Map;
 
@@ -26,8 +28,8 @@ public class DynamicJdbcRepositoryQuery extends DynamicStringBasedJdbcQuery {
      */
     public DynamicJdbcRepositoryQuery(
             DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations,
-            RowMapperFactory rowMapperFactory, JdbcConverter converter) {
-        super(queryMethod, operations, rowMapperFactory, converter);
+            @Nullable RowMapper<?> defaultRowMapper, JdbcConverter converter) {
+        super(queryMethod, operations, defaultRowMapper, converter);
         this.method = queryMethod;
     }
 

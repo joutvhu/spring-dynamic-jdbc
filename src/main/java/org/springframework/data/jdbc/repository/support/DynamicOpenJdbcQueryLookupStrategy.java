@@ -5,6 +5,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jdbc.core.convert.EntityRowMapper;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
+import org.springframework.data.jdbc.repository.query.JdbcQueryMethod;
 import org.springframework.data.mapping.callback.EntityCallbacks;
 import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.data.relational.core.mapping.RelationalMappingContext;
@@ -46,24 +47,27 @@ public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookup
     }
 
     @SuppressWarnings("unchecked")
-    public RowMapper<Object> createMapper(Class<?> returnedObjectType) {
+    public RowMapper<Object> createMapper(JdbcQueryMethod queryMethod) {
+        Class<?> returnedObjectType = queryMethod.getReturnedObjectType();
+
         RelationalPersistentEntity<?> persistentEntity = context.getPersistentEntity(returnedObjectType);
 
         if (persistentEntity == null) {
             return (RowMapper<Object>) SingleColumnRowMapper.newInstance(returnedObjectType, converter.getConversionService());
         }
 
-        return (RowMapper<Object>) determineDefaultMapper(returnedObjectType);
+        return (RowMapper<Object>) determineDefaultMapper(queryMethod);
     }
 
-    private RowMapper<?> determineDefaultMapper(Class<?> returnedObjectType) {
-        RowMapper<?> configuredQueryMapper = queryMappingConfiguration.getRowMapper(returnedObjectType);
+    private RowMapper<?> determineDefaultMapper(JdbcQueryMethod queryMethod) {
+        Class<?> domainType = queryMethod.getReturnedObjectType();
+        RowMapper<?> configuredQueryMapper = queryMappingConfiguration.getRowMapper(domainType);
 
         if (configuredQueryMapper != null)
             return configuredQueryMapper;
 
         EntityRowMapper<?> defaultEntityRowMapper = new EntityRowMapper<>(
-                context.getRequiredPersistentEntity(returnedObjectType),
+                context.getRequiredPersistentEntity(domainType),
                 converter);
 
         return new PostProcessingRowMapper<>(defaultEntityRowMapper);
