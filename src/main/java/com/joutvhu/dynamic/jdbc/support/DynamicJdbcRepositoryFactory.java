@@ -55,7 +55,7 @@ public class DynamicJdbcRepositoryFactory extends JdbcRepositoryFactory {
         return super.getQueryLookupStrategy(key, evaluationContextProvider)
                 .map(lookupStrategy -> DynamicJdbcQueryLookupStrategy.create(
                         publisher, entityCallbacks, context, converter, dialect, queryMappingConfiguration,
-                        operations, beanFactory, evaluationContextProvider, lookupStrategy
+                        operations, beanFactory, lookupStrategy
                 ));
     }
 

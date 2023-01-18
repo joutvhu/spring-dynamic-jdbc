@@ -3,7 +3,6 @@ package com.joutvhu.dynamic.jdbc;
 import com.joutvhu.dynamic.jdbc.entity.TableA;
 import com.joutvhu.dynamic.jdbc.entity.TableB;
 import com.joutvhu.dynamic.jdbc.entity.TableC;
-import com.joutvhu.dynamic.jdbc.model.ModelC;
 import com.joutvhu.dynamic.jdbc.model.TableAB;
 import com.joutvhu.dynamic.jdbc.repository.TableARepository;
 import com.joutvhu.dynamic.jdbc.repository.TableBRepository;
@@ -13,10 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = JpaDynamicApplication.class)
+@SpringBootTest(classes = JdbcDynamicApplication.class)
 @Transactional
-public class JpaDynamicApplicationTest {
+public class JdbcDynamicApplicationTest {
     @Autowired
     private TableARepository tableARepository;
     @Autowired
@@ -139,7 +134,7 @@ public class JpaDynamicApplicationTest {
 
     @Test
     public void findB4() {
-        List<TableB> result = tableBRepository.findB4(new ModelC(0L, "HTYRB"));
+        List<TableB> result = tableBRepository.findB4(0L, "HTYRB");
         Assertions.assertEquals(1, result.size());
     }
 

@@ -13,7 +13,6 @@ import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.data.repository.core.NamedQueries;
 import org.springframework.data.repository.core.RepositoryMetadata;
 import org.springframework.data.repository.query.QueryLookupStrategy;
-import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.lang.Nullable;
@@ -34,25 +33,22 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
             ApplicationEventPublisher publisher, @Nullable EntityCallbacks callbacks,
             RelationalMappingContext context, JdbcConverter converter, Dialect dialect,
             QueryMappingConfiguration queryMappingConfiguration, NamedParameterJdbcOperations operations,
-            @Nullable BeanFactory beanfactory, QueryMethodEvaluationContextProvider evaluationContextProvider,
-            QueryLookupStrategy queryLookupStrategy
+            @Nullable BeanFactory beanfactory, QueryLookupStrategy queryLookupStrategy
     ) {
-        super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration,
-                operations, beanfactory, evaluationContextProvider);
+        super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration, operations, beanfactory);
         this.context = context;
         this.jdbcQueryLookupStrategy = queryLookupStrategy;
     }
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
-        if (isMethodDynamicJpaHandle(method)) {
+        if (isDynamicQueryMethod(method)) {
             DynamicJdbcQueryMethod queryMethod = new DynamicJdbcQueryMethod(method, metadata, factory, namedQueries, context);
-            return new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper,
-                    getConverter(), evaluationContextProvider);
+            return new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper, getConverter());
         } else return jdbcQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
     }
 
-    private boolean isMethodDynamicJpaHandle(Method method) {
+    private boolean isDynamicQueryMethod(Method method) {
         DynamicQuery annotation = method.getAnnotation(DynamicQuery.class);
         return annotation != null;
     }
@@ -61,8 +57,7 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
             ApplicationEventPublisher publisher, @Nullable EntityCallbacks callbacks,
             RelationalMappingContext context, JdbcConverter converter, Dialect dialect,
             QueryMappingConfiguration queryMappingConfiguration, NamedParameterJdbcOperations operations,
-            @Nullable BeanFactory beanFactory, QueryMethodEvaluationContextProvider evaluationContextProvider,
-            QueryLookupStrategy queryLookupStrategy) {
+            @Nullable BeanFactory beanFactory, QueryLookupStrategy queryLookupStrategy) {
         Assert.notNull(publisher, "ApplicationEventPublisher must not be null");
         Assert.notNull(context, "RelationalMappingContextPublisher must not be null");
         Assert.notNull(converter, "JdbcConverter must not be null");
@@ -71,6 +66,6 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
         Assert.notNull(operations, "NamedParameterJdbcOperations must not be null");
 
         return new DynamicJdbcQueryLookupStrategy(publisher, callbacks, context, converter, dialect,
-                queryMappingConfiguration, operations, beanFactory, evaluationContextProvider, queryLookupStrategy);
+                queryMappingConfiguration, operations, beanFactory, queryLookupStrategy);
     }
 }

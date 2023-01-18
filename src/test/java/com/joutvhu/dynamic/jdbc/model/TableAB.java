@@ -1,7 +1,5 @@
 package com.joutvhu.dynamic.jdbc.model;
 
-import com.joutvhu.dynamic.jdbc.entity.TableA;
-import com.joutvhu.dynamic.jdbc.entity.TableB;
 import org.springframework.data.relational.core.mapping.Column;
 
 public class TableAB {

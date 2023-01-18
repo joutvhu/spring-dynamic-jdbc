@@ -55,6 +55,10 @@ public class DynamicJdbcQueryMethod extends DynamicOpenJdbcQueryMethod {
         this.method = method;
     }
 
+    public Method getMethod() {
+        return method;
+    }
+
     private DynamicQueryTemplateProvider getTemplateProvider() {
         if (queryTemplateProvider == null)
             queryTemplateProvider = ApplicationContextHolder.getBean(DynamicQueryTemplateProvider.class);

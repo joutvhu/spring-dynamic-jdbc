@@ -7,7 +7,6 @@ import org.springframework.data.jdbc.repository.query.DynamicJdbcParameterAccess
 import org.springframework.data.jdbc.repository.query.DynamicStringBasedJdbcQuery;
 import org.springframework.data.jdbc.repository.query.StringBasedJdbcQuery;
 import org.springframework.data.relational.repository.query.RelationalParameterAccessor;
-import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.data.repository.query.RepositoryQuery;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
@@ -26,9 +25,9 @@ public class DynamicJdbcRepositoryQuery extends DynamicStringBasedJdbcQuery {
      * Creates a new {@link DynamicJdbcRepositoryQuery} from the given {@link StringBasedJdbcQuery}.
      */
     public DynamicJdbcRepositoryQuery(
-            DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapperFactory rowMapperFactory,
-            JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
-        super(queryMethod, operations, rowMapperFactory, converter, evaluationContextProvider);
+            DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations,
+            RowMapperFactory rowMapperFactory, JdbcConverter converter) {
+        super(queryMethod, operations, rowMapperFactory, converter);
         this.method = queryMethod;
     }
 

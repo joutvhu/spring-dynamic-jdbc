@@ -136,7 +136,6 @@ public class DynamicJdbcRepositoryFactoryBean<T extends Repository<S, ID>, S, ID
 
             this.dataAccessStrategy = this.beanFactory.getBeanProvider(DataAccessStrategy.class) //
                     .getIfAvailable(() -> {
-
                         Assert.state(this.dialect != null, "Dialect is required and must not be null");
 
                         SqlGeneratorSource sqlGeneratorSource = new SqlGeneratorSource(this.mappingContext, this.converter,
