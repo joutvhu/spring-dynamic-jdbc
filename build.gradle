@@ -1,0 +1,234 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'groovy'
+    id 'signing'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'com.github.joutvhu'
+version = '3.0.6'
+
+def snapshotVersion = version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+ext {
+    versions = [
+            'spring-boot.version'           : '3.0.0',
+            'spring-framework.version'      : '6.0.2',
+            'spring-dynamic-commons.version': '2.0.0',
+            'commons-lang3.version'         : '3.12.0'
+    ]
+    managedVersions = [
+            'org.springframework:spring-aspects'          : 'spring-framework.version',
+            'org.springframework:spring-context'          : 'spring-framework.version',
+            'org.springframework:spring-jcl'              : 'spring-framework.version',
+            'org.springframework:spring-context-support'  : 'spring-framework.version',
+            'org.springframework.data:spring-data-commons': 'spring-boot.version',
+            'org.springframework.data:spring-data-jdbc'   : 'spring-boot.version',
+            'com.github.joutvhu:spring-dynamic-commons'   : 'spring-dynamic-commons.version',
+            'org.apache.commons:commons-lang3'            : 'commons-lang3.version'
+    ]
+    otherVersions = [
+            'org.springframework.boot:spring-boot-dependencies': 'spring-boot.version'
+    ]
+}
+
+dependencyManagement {
+    dependencies {
+        ext.managedVersions.each {
+            dependency "${it.key}:${ext.versions[it.value]}"
+        }
+    }
+}
+
+dependencies {
+    implementation 'org.springframework:spring-aspects'
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework:spring-context-support'
+
+    implementation 'org.springframework.data:spring-data-jdbc'
+    implementation 'org.springframework.data:spring-data-commons'
+
+    implementation 'com.github.joutvhu:spring-dynamic-commons'
+
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
+    testImplementation(platform('org.junit:junit-bom:5.8.2'))
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'junit', module: 'junit'
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-api'
+        exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+    }
+    testImplementation 'com.h2database:h2'
+    testImplementation 'com.github.joutvhu:spring-dynamic-freemarker:1.0.0'
+
+    testCompileOnly 'org.projectlombok:lombok:1.18.24'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+}
+
+jar {
+    enabled = true
+    manifest {
+        attributes 'Built-By': 'joutvhu (Giao Ho)'
+        attributes 'Build-Date': java.time.Instant.now().toString()
+        attributes 'Bundle-Name': 'Spring Dynamic JDBC'
+        attributes 'Bundle-Vendor': project.group
+        attributes 'Bundle-SymbolicName': project.name
+        attributes 'Bundle-Version': project.version
+    }
+    into("META-INF/maven/${project.group}/${project.name}") {
+        from {
+            generatePomFileForMavenPublication
+        }
+        rename {
+            it.replace('pom-default.xml', 'pom.xml')
+        }
+    }
+}
+
+bootJar {
+    enabled = false
+}
+
+task fatJar(type: Jar) {
+    manifest.from jar.manifest
+    with jar
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives fatJar, sourcesJar, javadocJar
+}
+
+test {
+    useJUnitPlatform()
+    filter {
+        includeTestsMatching 'com.joutvhu.dynamic.jpa.*'
+    }
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = group
+            artifactId = project.name
+            artifacts = [fatJar, sourcesJar, javadocJar]
+            version = version
+
+            pom {
+                name = project.name
+                description = 'Easier to implement dynamic queries with JpaRepository'
+                url = 'https://github.com/joutvhu/spring-dynamic-jpa'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://github.com/joutvhu/spring-dynamic-jpa/blob/main/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'joutvhu'
+                        name = 'Giao Ho'
+                        email = 'joutvhu@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git@github.com:joutvhu/spring-dynamic-jpa.git'
+                    developerConnection = 'scm:git:git@github.com:joutvhu/spring-dynamic-jpa.git'
+                    url = 'https://github.com/joutvhu/spring-dynamic-jpa'
+                }
+                issueManagement {
+                    system = 'Github Issue'
+                    url = 'https://github.com/joutvhu/spring-dynamic-jpa/issues'
+                }
+                organization {
+                    name = 'Giao Ho'
+                    url = 'https://github.com/joutvhu'
+                }
+                properties = project.ext.versions
+                withXml {
+                    def dependencyManagement = asNode().get('dependencyManagement')
+                    dependencyManagement.dependencies.dependency.each {
+                        def key = "${it.groupId.text()}:${it.artifactId.text()}"
+                        def versionProperty = project.ext.managedVersions[key]
+                        if (versionProperty == null) {
+                            versionProperty = project.ext.otherVersions[key]
+                        }
+                        if (versionProperty) {
+                            it.version[0].setValue("\${$versionProperty}")
+                        }
+                    }
+
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    configurations.implementation.allDependencies.each {
+                        def dependencyNode = dependenciesNode.appendNode('dependency')
+                        dependencyNode.appendNode('groupId', it.group)
+                        dependencyNode.appendNode('artifactId', it.name)
+                        if (it.version != null) {
+                            dependencyNode.appendNode('version', it.version)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'sonatype'
+            if (snapshotVersion) {
+                url = 'https://oss.sonatype.org/content/repositories/snapshots'
+            } else {
+                url = 'https://oss.sonatype.org/service/local/staging/deploy/maven2'
+            }
+            credentials {
+                username = project.ossrhUsername
+                password = project.ossrhPassword
+            }
+        }
+        maven {
+            name = 'github'
+            url = "https://maven.pkg.github.com/joutvhu/spring-dynamic-jpa"
+            credentials {
+                username = project.githubUsername
+                password = project.githubPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.maven
+}
+
+tasks.publishMavenPublicationToGithubRepository.configure {
+    onlyIf { !snapshotVersion }
+}
