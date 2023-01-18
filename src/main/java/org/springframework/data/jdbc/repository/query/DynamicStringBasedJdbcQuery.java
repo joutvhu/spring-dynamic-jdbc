@@ -3,7 +3,7 @@ package org.springframework.data.jdbc.repository.query;
 import com.joutvhu.dynamic.jdbc.query.DynamicJdbcQueryMethod;
 import org.springframework.data.jdbc.core.convert.JdbcColumnTypes;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
-import org.springframework.data.jdbc.core.mapping.JdbcValue;
+import org.springframework.data.jdbc.core.convert.JdbcValue;
 import org.springframework.data.jdbc.support.JdbcUtil;
 import org.springframework.data.relational.repository.query.RelationalParameterAccessor;
 import org.springframework.data.relational.repository.query.RelationalParametersParameterAccessor;
@@ -15,7 +15,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.util.ObjectUtils;
 
-import java.sql.SQLType;
+import java.sql.JDBCType;
 
 public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
     private static final String PARAMETER_NEEDS_TO_BE_NAMED = "For queries with named parameters you need to provide names for method parameters. Use @Param for query method parameters, or when on Java 8+ use the javac flag -parameters.";
@@ -46,10 +46,8 @@ public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
         RowMapper<Object> rowMapper = determineRowMapper(rowMapperFactory.create(resolveTypeToRead(processor)), converter,
                 accessor.findDynamicProjection() != null);
 
-        JdbcQueryExecution<?> queryExecution = getQueryExecution(//
-                queryMethod, //
-                determineResultSetExtractor(rowMapper), //
-                rowMapper);
+        JdbcQueryExecution<?> queryExecution = getQueryExecution(queryMethod,
+                determineResultSetExtractor(rowMapper), rowMapper);
 
         MapSqlParameterSource parameterMap = this.bindParameters(accessor);
 
@@ -83,10 +81,11 @@ public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
         Class<?> conversionTargetType = JdbcColumnTypes.INSTANCE.resolvePrimitiveType(parameterType);
 
         JdbcValue jdbcValue = converter.writeJdbcValue(value, conversionTargetType,
-                JdbcUtil.targetSqlTypeFor(conversionTargetType));
+                JdbcUtil.sqlTypeFor(conversionTargetType));
 
-        SQLType jdbcType = jdbcValue.getJdbcType();
+        JDBCType jdbcType = jdbcValue.getJdbcType();
         if (jdbcType == null) {
+
             parameters.addValue(parameterName, jdbcValue.getValue());
         } else {
             parameters.addValue(parameterName, jdbcValue.getValue(), jdbcType.getVendorTypeNumber());

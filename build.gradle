@@ -5,12 +5,12 @@ plugins {
     id 'signing'
     id 'java-library'
     id 'maven-publish'
-    id 'org.springframework.boot' version '2.7.0'
+    id 'org.springframework.boot' version '2.6.0'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.github.joutvhu'
-version = '3.0.0'
+version = '2.3.0'
 
 def snapshotVersion = version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')
 
@@ -27,11 +27,10 @@ repositories {
 
 ext {
     versions = [
-            'spring-boot.version'           : '2.7.0',
-            'spring-framework.version'      : '5.3.20',
-            'spring-data-jdbc.version'      : '2.4.0',
-            'spring-dynamic-commons.version': '2.0.0',
-            'commons-lang3.version'         : '3.12.0'
+            'spring-boot.version'           : '2.6.0',
+            'spring-framework.version'      : '5.3.13',
+            'spring-data-jdbc.version'      : '2.3.0',
+            'spring-dynamic-commons.version': '2.0.0'
     ]
     managedVersions = [
             'org.springframework:spring-aspects'          : 'spring-framework.version',
@@ -40,8 +39,7 @@ ext {
             'org.springframework:spring-context-support'  : 'spring-framework.version',
             'org.springframework.data:spring-data-commons': 'spring-boot.version',
             'org.springframework.data:spring-data-jdbc'   : 'spring-data-jdbc.version',
-            'com.github.joutvhu:spring-dynamic-commons'   : 'spring-dynamic-commons.version',
-            'org.apache.commons:commons-lang3'            : 'commons-lang3.version'
+            'com.github.joutvhu:spring-dynamic-commons'   : 'spring-dynamic-commons.version'
     ]
     otherVersions = [
             'org.springframework.boot:spring-boot-dependencies': 'spring-boot.version'

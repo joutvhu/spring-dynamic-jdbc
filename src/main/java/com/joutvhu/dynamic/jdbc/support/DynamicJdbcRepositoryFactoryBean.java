@@ -7,13 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.jdbc.core.convert.BatchJdbcOperations;
 import org.springframework.data.jdbc.core.convert.DataAccessStrategy;
 import org.springframework.data.jdbc.core.convert.DefaultDataAccessStrategy;
-import org.springframework.data.jdbc.core.convert.InsertStrategyFactory;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.core.convert.SqlGeneratorSource;
-import org.springframework.data.jdbc.core.convert.SqlParametersFactory;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
 import org.springframework.data.jdbc.repository.support.JdbcRepositoryFactoryBean;
 import org.springframework.data.mapping.callback.EntityCallbacks;
@@ -122,30 +119,27 @@ public class DynamicJdbcRepositoryFactoryBean<T extends Repository<S, ID>, S, ID
 
     @Override
     public void afterPropertiesSet() {
-        Assert.state(this.mappingContext != null, "MappingContext is required and must not be null");
-        Assert.state(this.converter != null, "RelationalConverter is required and must not be null");
+        Assert.state(this.mappingContext != null, "MappingContext is required and must not be null!");
+        Assert.state(this.converter != null, "RelationalConverter is required and must not be null!");
 
         if (this.operations == null) {
-            Assert.state(beanFactory != null, "If no JdbcOperations are set a BeanFactory must be available");
+            Assert.state(beanFactory != null, "If no JdbcOperations are set a BeanFactory must be available.");
 
             this.operations = beanFactory.getBean(NamedParameterJdbcOperations.class);
         }
 
         if (this.dataAccessStrategy == null) {
-            Assert.state(beanFactory != null, "If no DataAccessStrategy is set a BeanFactory must be available");
+            Assert.state(beanFactory != null, "If no DataAccessStrategy is set a BeanFactory must be available.");
 
             this.dataAccessStrategy = this.beanFactory.getBeanProvider(DataAccessStrategy.class) //
                     .getIfAvailable(() -> {
-                        Assert.state(this.dialect != null, "Dialect is required and must not be null");
+
+                        Assert.state(this.dialect != null, "Dialect is required and must not be null!");
 
                         SqlGeneratorSource sqlGeneratorSource = new SqlGeneratorSource(this.mappingContext, this.converter,
                                 this.dialect);
-                        SqlParametersFactory sqlParametersFactory = new SqlParametersFactory(this.mappingContext, this.converter,
-                                this.dialect);
-                        InsertStrategyFactory insertStrategyFactory = new InsertStrategyFactory(this.operations,
-                                new BatchJdbcOperations(this.operations.getJdbcOperations()), this.dialect);
                         return new DefaultDataAccessStrategy(sqlGeneratorSource, this.mappingContext, this.converter,
-                                this.operations, sqlParametersFactory, insertStrategyFactory);
+                                this.operations);
                     });
         }
 
