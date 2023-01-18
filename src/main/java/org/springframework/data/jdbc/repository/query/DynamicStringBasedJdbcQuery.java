@@ -35,10 +35,6 @@ public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
     private BeanFactory beanFactory;
     private QueryMethodEvaluationContextProvider evaluationContextProvider;
 
-    public DynamicStringBasedJdbcQuery(DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapper<?> defaultRowMapper, JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
-        this(queryMethod, operations, result -> (RowMapper<Object>) defaultRowMapper, converter, evaluationContextProvider);
-    }
-
     public DynamicStringBasedJdbcQuery(DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapperFactory rowMapperFactory, JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
         super(queryMethod, operations, rowMapperFactory, converter, evaluationContextProvider);
 
@@ -107,7 +103,6 @@ public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
 
         JdbcValue jdbcValue;
         if (value instanceof Iterable) {
-
             List<Object> mapped = new ArrayList<>();
             SQLType jdbcType = null;
 
@@ -133,7 +128,6 @@ public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
 
         SQLType jdbcType = jdbcValue.getJdbcType();
         if (jdbcType == null) {
-
             parameters.addValue(parameterName, jdbcValue.getValue());
         } else {
             parameters.addValue(parameterName, jdbcValue.getValue(), jdbcType.getVendorTypeNumber());
