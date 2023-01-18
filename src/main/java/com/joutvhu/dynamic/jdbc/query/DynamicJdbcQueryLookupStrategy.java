@@ -45,14 +45,14 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
-        if (isMethodDynamicJpaHandle(method)) {
+        if (isDynamicQueryMethod(method)) {
             DynamicJdbcQueryMethod queryMethod = new DynamicJdbcQueryMethod(method, metadata, factory, namedQueries, context);
             return new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper,
                     getConverter(), evaluationContextProvider);
         } else return jdbcQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
     }
 
-    private boolean isMethodDynamicJpaHandle(Method method) {
+    private boolean isDynamicQueryMethod(Method method) {
         DynamicQuery annotation = method.getAnnotation(DynamicQuery.class);
         return annotation != null;
     }

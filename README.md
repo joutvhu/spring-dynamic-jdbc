@@ -141,7 +141,7 @@ select * from USER
 - Now you don't need to specify the query template on `@DynamicQuery` annotation.
 
 ```java
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
     @DynamicQuery
     List<User> findUserByNames(Long firstName, String lastName);
 
