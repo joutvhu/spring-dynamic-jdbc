@@ -11,8 +11,8 @@ import org.springframework.data.repository.query.QueryMethodEvaluationContextPro
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 
-public abstract class AbstractJdbcQueryLookupStrategy extends JdbcQueryLookupStrategy {
-    public AbstractJdbcQueryLookupStrategy(
+public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookupStrategy {
+    public DynamicOpenJdbcQueryLookupStrategy(
             ApplicationEventPublisher publisher, EntityCallbacks callbacks, RelationalMappingContext context,
             JdbcConverter converter, Dialect dialect, QueryMappingConfiguration queryMappingConfiguration,
             NamedParameterJdbcOperations operations, BeanFactory beanfactory,

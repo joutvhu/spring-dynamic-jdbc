@@ -10,7 +10,7 @@ plugins {
 }
 
 group = 'com.github.joutvhu'
-version = '3.0.6'
+version = '3.0.0'
 
 def snapshotVersion = version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')
 
@@ -146,7 +146,7 @@ publishing {
 
             pom {
                 name = project.name
-                description = 'Easier to implement dynamic queries with JpaRepository'
+                description = 'The Spring Dynamic JDBC will make it easy to implement dynamic queries with Spring Data JDBC'
                 url = 'https://github.com/joutvhu/spring-dynamic-jpa'
                 licenses {
                     license {

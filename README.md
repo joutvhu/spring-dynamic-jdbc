@@ -1,42 +1,33 @@
 # Spring Dynamic JDBC
 
-The Spring Dynamic JDBC will make it easy to implement dynamic queries with JpaRepository.
+The Spring Dynamic JDBC will make it easy to implement dynamic queries with Spring Data JDBC.
 
 ## How to use?
 
 ### Install dependency
 
 ```groovy
-implementation 'com.github.joutvhu:spring-dynamic-jpa:3.0.6'
+implementation 'com.github.joutvhu:spring-dynamic-jdbc:3.0.0'
 ```
 
 ```xml
 <dependency>
     <groupId>com.github.joutvhu</groupId>
-    <artifactId>spring-dynamic-jpa</artifactId>
-    <version>3.0.6</version>
+    <artifactId>spring-dynamic-jdbc</artifactId>
+    <version>3.0.0</version>
 </dependency>
 ```
 
-- Please choose the _Spring Dynamic JPA_ version appropriate with your spring version.
+- Please choose the _Spring Dynamic JDBC_ version appropriate with your spring version.
 
-  | Spring Boot version | Spring Dynamic JPA version |
+  | Spring Boot version | Spring Dynamic JDBC version |
   |:----------:|:-------------:|
-  | 2.0.x.RELEASE | 2.0.6 |
-  | 2.1.x.RELEASE | 2.1.6 |
-  | 2.2.x.RELEASE | 2.2.6 |
-  | 2.3.x.RELEASE | 2.3.6 |
-  | 2.4.x | 2.3.6 |
-  | 2.5.x | 2.3.6 |
-  | 2.6.x | 2.3.6 |
-  | 2.7.x | 2.7.6 |
-  | 3.0.x | 3.0.6 |
+  | 3.0.x | 3.0.0 |
 
 Also, you have to choose a [Dynamic Query Template Provider](https://github.com/joutvhu/spring-dynamic-commons#dynamic-query-template-provider) to use,
 the Dynamic Query Template Provider will decide the style you write dynamic query template.
 
 In this document, I will use [Spring Dynamic Freemarker](https://github.com/joutvhu/spring-dynamic-freemarker).
-If you migrated from a lower version, you should use it.
 
 ```groovy
 implementation 'com.github.joutvhu:spring-dynamic-freemarker:1.0.0'
@@ -64,57 +55,45 @@ public DynamicQueryTemplateProvider dynamicQueryTemplateProvider() {
 }
 ```
 
-- Next, you need to set the jpa repository's `repositoryFactoryBeanClass` property to `DynamicJpaRepositoryFactoryBean.class`.
+- Next, you need to set the jdbc repository's `repositoryFactoryBeanClass` property to `DynamicJdbcRepositoryFactoryBean.class`.
 
 ```java
 // Config with annotation
-@EnableJpaRepositories(repositoryFactoryBeanClass = DynamicJpaRepositoryFactoryBean.class)
-```
-
-```xml
-<!-- Config with xml -->
-<jpa:repositories repository-factory-bean-class="com.joutvhu.dynamic.jdbc.support.DynamicJdbcRepositoryFactoryBean"/>
+@EnableJdbcRepositories(repositoryFactoryBeanClass = DynamicJdbcRepositoryFactoryBean.class)
 ```
 
 ### Dynamic query
 
-- Methods annotated with `@DynamicQuery` tells `DynamicJpaQueryLookupStrategy` to know the content of the query is query template. It needs to parse the query template to query string before executing the query.
+- Use annotation @DynamicQuery to define dynamic queries.
 
 ```java
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
     @DynamicQuery(
-        value = "select t from User t where t.firstName = :firstName\n" +
+        value = "select * from USER where FIRST_NAME = :firstName\n" +
             "<#if lastName?has_content>\n" +
-            "  and t.lastName = :lastName\n" +
+            "  and LAST_NAME = :lastName\n" +
             "</#if>"
     )
     List<User> findUserByNames(Long firstName, String lastName);
 
-    @Query(value = "select t from User t where t.firstName = :firstName")
+    @Query(value = "select * from USER where FIRST_NAME = :firstName")
     List<User> findByFirstName(String firstName);
-
-    List<User> findByLastName(String lastName);
 
     @DynamicQuery(
         value = "select USER_ID from USER\n" +
             "<#if name??>\n" +
             "  where concat(FIRST_NAME, ' ', LAST_NAME) like %:name%\n" +
-            "</#if>",
-        nativeQuery = true
+            "</#if>"
     )
     List<Long> searchIdsByName(String name);
 
     @DynamicQuery(
-        value = "select t from User t\n" +
+        value = "select * from USER\n" +
             "<#if role??>\n" +
-            "  where t.role = :role\n" +
-            "</#if>",
-        countQuery = "select count(t) from User t\n" +
-            "<#if role??>\n" +
-            "  where t.role = :role\n" +
+            "  where ROLE = :role\n" +
             "</#if>"
     )
-    Page<User> findByRole(String role, Pageable pageable);
+    List<User> findByRole(String role);
 }
 ```
 
@@ -126,30 +105,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
 - If you don't want to load the template from external template files you can use the following code `provider.setSuffix(null);`.
 
 - Each template will start with a template name definition line. The template name definition line must be start with two dash characters (`--`). The template name will have the following syntax.
-  
-  ```
-  entityName:methodName[.queryType]
-  ```
 
-  - `entityName` is entity class name
-  
-  - `methodName` is query method name
-  
-  - `queryType`  corresponds to what query type of `@DynamicQuery` annotation.
-    
-  | queryType | DynamicQuery field |
-  |:----------:|:-------------:|
-  | empty |  DynamicQuery.value |
-  | "count" |  DynamicQuery.countQuery |
-  | "projection" |  DynamicQuery.countProjection |
+  ```
+  entityName:methodName
+  ```
 
 - Query templates (Ex: `resoucers/query/user-query.dsql`) 
 
 ```sql
 --User:findUserByNames
-select t from User t where t.firstName = :firstName
+select * from USER where FIRST_NAME = :firstName
 <#if lastName?has_content>
-  and t.lastName = :lastName
+  and LAST_NAME = :lastName
 </#if>
 
 -- User:searchIdsByName
@@ -159,21 +126,15 @@ select USER_ID from USER
 </#if>
 
 -- User:findByRole
-select t from User t
+select * from USER
 <#if role??>
-  where t.role = :role
-</#if>
-
--- User:findByRole.count
-select count(t) from User t
-<#if role??>
-  where t.role = :role
+  where ROLE = :role
 </#if>
 
 -- User:findByGroup
-select t from User t
+select * from USER
 <#if group.name?starts_with("Git")>
-  where t.groupId = :#{#group.id}
+  where GROUP_ID = :#{#group.id}
 </#if>
 ```
 
@@ -184,16 +145,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @DynamicQuery
     List<User> findUserByNames(Long firstName, String lastName);
 
-    @Query(value = "select t from User t where t.firstName = :firstName")
+    @Query(value = "select * from USER where FIRST_NAME = :firstName")
     List<User> findByFirstName(String firstName);
 
-    List<User> findByLastName(String lastName);
-
-    @DynamicQuery(nativeQuery = true)
+    @DynamicQuery
     List<Long> searchIdsByName(String name);
 
     @DynamicQuery
-    Page<User> findByRole(String role, Pageable pageable);
+    List<User> findByRole(String role);
 
     @DynamicQuery
     List<User> findByGroup(Group group);

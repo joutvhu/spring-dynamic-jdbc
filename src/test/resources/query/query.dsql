@@ -1,0 +1,23 @@
+--TableB:findB1
+select * from TABLE_B
+<#if fieldE?has_content && fieldE?starts_with("H")>
+  where FIELD_E = :fieldE
+</#if>
+
+--TableB:findB2
+select * from TABLE_B
+<#if maxD??>
+  where FIELD_D < :maxD
+</#if>
+
+--TableB:findB3
+select * from TABLE_B
+<#if maxD??>
+  where FIELD_D < :maxD
+</#if>
+
+--TableB:sumB1
+select sum(FIELD_D) from TABLE_B
+<#if maxD??>
+  where FIELD_D < :maxD
+</#if>

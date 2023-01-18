@@ -18,10 +18,9 @@ import org.springframework.lang.Nullable;
 import java.util.Optional;
 
 /**
- * JPA specific generic repository factory.
+ * JDBC specific generic repository factory.
  *
  * @author Giao Ho
- * @since 2.x.1
  */
 public class DynamicJdbcRepositoryFactory extends JdbcRepositoryFactory {
     private final RelationalMappingContext context;

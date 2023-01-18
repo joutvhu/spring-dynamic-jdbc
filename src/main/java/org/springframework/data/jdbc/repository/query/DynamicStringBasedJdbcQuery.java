@@ -1,5 +1,6 @@
 package org.springframework.data.jdbc.repository.query;
 
+import com.joutvhu.dynamic.jdbc.query.DynamicJdbcQueryMethod;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.core.ResolvableType;
 import org.springframework.data.jdbc.core.convert.JdbcColumnTypes;
@@ -28,17 +29,17 @@ import java.util.List;
 public abstract class DynamicStringBasedJdbcQuery extends StringBasedJdbcQuery {
     private static final String PARAMETER_NEEDS_TO_BE_NAMED = "For queries with named parameters you need to provide names for method parameters; Use @Param for query method parameters, or when on Java 8+ use the javac flag -parameters";
 
-    private JdbcQueryMethod queryMethod;
+    private DynamicJdbcQueryMethod queryMethod;
     private JdbcConverter converter;
     private RowMapperFactory rowMapperFactory;
     private BeanFactory beanFactory;
     private QueryMethodEvaluationContextProvider evaluationContextProvider;
 
-    public DynamicStringBasedJdbcQuery(JdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapper<?> defaultRowMapper, JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
+    public DynamicStringBasedJdbcQuery(DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapper<?> defaultRowMapper, JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
         this(queryMethod, operations, result -> (RowMapper<Object>) defaultRowMapper, converter, evaluationContextProvider);
     }
 
-    public DynamicStringBasedJdbcQuery(JdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapperFactory rowMapperFactory, JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
+    public DynamicStringBasedJdbcQuery(DynamicJdbcQueryMethod queryMethod, NamedParameterJdbcOperations operations, RowMapperFactory rowMapperFactory, JdbcConverter converter, QueryMethodEvaluationContextProvider evaluationContextProvider) {
         super(queryMethod, operations, rowMapperFactory, converter, evaluationContextProvider);
 
         this.queryMethod = queryMethod;

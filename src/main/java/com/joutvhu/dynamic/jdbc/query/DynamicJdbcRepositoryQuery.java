@@ -5,7 +5,6 @@ import com.joutvhu.dynamic.jdbc.DynamicQuery;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.query.DynamicJdbcParameterAccessor;
 import org.springframework.data.jdbc.repository.query.DynamicStringBasedJdbcQuery;
-import org.springframework.data.jdbc.repository.query.JdbcQueryMethod;
 import org.springframework.data.jdbc.repository.query.StringBasedJdbcQuery;
 import org.springframework.data.relational.repository.query.RelationalParameterAccessor;
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
@@ -16,10 +15,9 @@ import java.util.Map;
 
 /**
  * {@link RepositoryQuery} implementation that inspects a {@link DynamicJdbcQueryMethod}
- * for the existence of an {@link DynamicQuery} annotation and creates a JPA {@link DynamicQuery} from it.
+ * for the existence of an {@link DynamicQuery} annotation and creates a JDBC {@link DynamicQuery} from it.
  *
  * @author Giao Ho
- * @since 2.x.1
  */
 public class DynamicJdbcRepositoryQuery extends DynamicStringBasedJdbcQuery {
     private final DynamicJdbcQueryMethod method;

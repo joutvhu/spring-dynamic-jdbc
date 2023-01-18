@@ -5,7 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
-import org.springframework.data.jdbc.repository.support.AbstractJdbcQueryLookupStrategy;
+import org.springframework.data.jdbc.repository.support.DynamicOpenJdbcQueryLookupStrategy;
 import org.springframework.data.mapping.callback.EntityCallbacks;
 import org.springframework.data.projection.ProjectionFactory;
 import org.springframework.data.relational.core.dialect.Dialect;
@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  *
  * @author Giao Ho
  */
-public class DynamicJdbcQueryLookupStrategy extends AbstractJdbcQueryLookupStrategy {
+public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupStrategy {
     private RelationalMappingContext context;
     private QueryLookupStrategy jdbcQueryLookupStrategy;
 
