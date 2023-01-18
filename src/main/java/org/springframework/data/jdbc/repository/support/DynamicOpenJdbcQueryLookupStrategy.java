@@ -32,4 +32,9 @@ public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookup
     public RowMapper<Object> createMapper(Class<?> returnedObjectType) {
         return super.createMapper(returnedObjectType);
     }
+
+    @Override
+    public BeanFactory getBeanFactory() {
+        return super.getBeanFactory();
+    }
 }
