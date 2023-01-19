@@ -35,9 +35,9 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
             ApplicationEventPublisher publisher, @Nullable EntityCallbacks callbacks,
             RelationalMappingContext context, JdbcConverter converter, Dialect dialect,
             QueryMappingConfiguration queryMappingConfiguration, NamedParameterJdbcOperations operations,
-            @Nullable BeanFactory beanfactory, QueryLookupStrategy queryLookupStrategy
+            QueryLookupStrategy queryLookupStrategy
     ) {
-        super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration, operations, beanfactory);
+        super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration, operations);
         this.context = context;
         this.jdbcQueryLookupStrategy = queryLookupStrategy;
     }
@@ -47,9 +47,7 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
         if (isDynamicQueryMethod(method)) {
             DynamicJdbcQueryMethod queryMethod = new DynamicJdbcQueryMethod(method, metadata, factory, namedQueries, context);
             RowMapper<?> mapper = queryMethod.isModifyingQuery() ? null : createMapper(queryMethod);
-            StringBasedJdbcQuery query = new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), mapper, getConverter());
-            query.setBeanFactory(this.getBeanFactory());
-            return query;
+            return new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), mapper, getConverter());
         } else return jdbcQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
     }
 
@@ -62,7 +60,7 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
             ApplicationEventPublisher publisher, @Nullable EntityCallbacks callbacks,
             RelationalMappingContext context, JdbcConverter converter, Dialect dialect,
             QueryMappingConfiguration queryMappingConfiguration, NamedParameterJdbcOperations operations,
-            @Nullable BeanFactory beanFactory, QueryLookupStrategy queryLookupStrategy) {
+            QueryLookupStrategy queryLookupStrategy) {
         Assert.notNull(publisher, "ApplicationEventPublisher must not be null");
         Assert.notNull(context, "RelationalMappingContextPublisher must not be null");
         Assert.notNull(converter, "JdbcConverter must not be null");
@@ -71,6 +69,6 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
         Assert.notNull(operations, "NamedParameterJdbcOperations must not be null");
 
         return new DynamicJdbcQueryLookupStrategy(publisher, callbacks, context, converter, dialect,
-                queryMappingConfiguration, operations, beanFactory, queryLookupStrategy);
+                queryMappingConfiguration, operations, queryLookupStrategy);
     }
 }

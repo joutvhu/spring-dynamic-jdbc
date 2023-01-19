@@ -24,17 +24,7 @@ public abstract class DynamicOpenJdbcQueryMethod extends JdbcQueryMethod {
     }
 
     @Override
-    public String getRowMapperRef() {
-        return super.getRowMapperRef();
-    }
-
-    @Override
     public Class<? extends ResultSetExtractor> getResultSetExtractorClass() {
         return super.getResultSetExtractorClass();
-    }
-
-    @Override
-    public String getResultSetExtractorRef() {
-        return super.getResultSetExtractorRef();
     }
 }

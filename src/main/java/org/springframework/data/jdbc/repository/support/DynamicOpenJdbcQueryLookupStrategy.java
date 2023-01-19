@@ -19,19 +19,17 @@ public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookup
     private final JdbcConverter converter;
     private final QueryMappingConfiguration queryMappingConfiguration;
     private final NamedParameterJdbcOperations operations;
-    private final BeanFactory beanfactory;
 
     public DynamicOpenJdbcQueryLookupStrategy(
             ApplicationEventPublisher publisher, EntityCallbacks callbacks, RelationalMappingContext context,
             JdbcConverter converter, Dialect dialect, QueryMappingConfiguration queryMappingConfiguration,
-            NamedParameterJdbcOperations operations, BeanFactory beanfactory) {
-        super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration, operations, beanfactory);
+            NamedParameterJdbcOperations operations) {
+        super(publisher, callbacks, context, converter, dialect, queryMappingConfiguration, operations);
 
         this.context = context;
         this.converter = converter;
         this.queryMappingConfiguration = queryMappingConfiguration;
         this.operations = operations;
-        this.beanfactory = beanfactory;
     }
 
     public NamedParameterJdbcOperations getOperations() {
@@ -40,10 +38,6 @@ public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookup
 
     public JdbcConverter getConverter() {
         return converter;
-    }
-
-    public BeanFactory getBeanFactory() {
-        return beanfactory;
     }
 
     @SuppressWarnings("unchecked")

@@ -111,17 +111,6 @@ public class DynamicJdbcQueryMethod extends DynamicOpenJdbcQueryMethod {
     }
 
     /**
-     * Returns the name of the bean to be used as {@link org.springframework.jdbc.core.RowMapper}
-     *
-     * @return May be {@code null}.
-     */
-    @Nullable
-    @Override
-    public String getRowMapperRef() {
-        return getMergedOrDefaultAnnotationValue("rowMapperRef", DynamicQuery.class, String.class);
-    }
-
-    /**
      * Returns the class to be used as {@link org.springframework.jdbc.core.ResultSetExtractor}
      *
      * @return May be {@code null}.
@@ -130,17 +119,6 @@ public class DynamicJdbcQueryMethod extends DynamicOpenJdbcQueryMethod {
     @Override
     public Class<? extends ResultSetExtractor> getResultSetExtractorClass() {
         return getMergedOrDefaultAnnotationValue("resultSetExtractorClass", DynamicQuery.class, Class.class);
-    }
-
-    /**
-     * Returns the bean name to be used as {@link org.springframework.jdbc.core.ResultSetExtractor}
-     *
-     * @return May be {@code null}.
-     */
-    @Nullable
-    @Override
-    public String getResultSetExtractorRef() {
-        return getMergedOrDefaultAnnotationValue("resultSetExtractorRef", DynamicQuery.class, String.class);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

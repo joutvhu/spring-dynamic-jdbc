@@ -13,7 +13,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.jdbc.support.JdbcTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
@@ -23,7 +22,6 @@ import java.nio.charset.StandardCharsets;
 @EnableTransactionManagement
 @EnableJdbcRepositories(
         basePackages = {"com.joutvhu.dynamic.jdbc.repository"},
-        transactionManagerRef = "transactionManager",
         repositoryFactoryBeanClass = DynamicJdbcRepositoryFactoryBean.class
 )
 public class JdbcDynamicApplication {
@@ -34,12 +32,6 @@ public class JdbcDynamicApplication {
     @Bean
     public NamedParameterJdbcOperations namedParameterJdbcOperations(DataSource dataSource) {
         return new NamedParameterJdbcTemplate(dataSource);
-    }
-
-    @Primary
-    @Bean(name = "transactionManager")
-    public JdbcTransactionManager transactionManager(DataSource dataSource) {
-        return new JdbcTransactionManager(dataSource);
     }
 
     @Bean(name = "dataSourceInitializer")

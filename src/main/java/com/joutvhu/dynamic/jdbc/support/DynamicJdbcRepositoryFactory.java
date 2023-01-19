@@ -28,8 +28,6 @@ public class DynamicJdbcRepositoryFactory extends JdbcRepositoryFactory {
     private final ApplicationEventPublisher publisher;
     private final NamedParameterJdbcOperations operations;
     private final Dialect dialect;
-    @Nullable
-    private BeanFactory beanFactory;
 
     private QueryMappingConfiguration queryMappingConfiguration = QueryMappingConfiguration.EMPTY;
     private EntityCallbacks entityCallbacks;
@@ -55,7 +53,7 @@ public class DynamicJdbcRepositoryFactory extends JdbcRepositoryFactory {
         return super.getQueryLookupStrategy(key, evaluationContextProvider)
                 .map(lookupStrategy -> DynamicJdbcQueryLookupStrategy.create(
                         publisher, entityCallbacks, context, converter, dialect, queryMappingConfiguration,
-                        operations, beanFactory, lookupStrategy
+                        operations, lookupStrategy
                 ));
     }
 
@@ -63,11 +61,5 @@ public class DynamicJdbcRepositoryFactory extends JdbcRepositoryFactory {
     public void setEntityCallbacks(EntityCallbacks entityCallbacks) {
         super.setEntityCallbacks(entityCallbacks);
         this.entityCallbacks = entityCallbacks;
-    }
-
-    @Override
-    public void setBeanFactory(BeanFactory beanFactory) {
-        super.setBeanFactory(beanFactory);
-        this.beanFactory = beanFactory;
     }
 }
