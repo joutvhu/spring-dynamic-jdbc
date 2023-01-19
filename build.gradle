@@ -5,12 +5,12 @@ plugins {
     id 'signing'
     id 'java-library'
     id 'maven-publish'
-    id 'org.springframework.boot' version '2.5.0'
+    id 'org.springframework.boot' version '2.4.0'
     id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.github.joutvhu'
-version = '2.2.0'
+version = '2.1.0'
 
 def snapshotVersion = version.endsWith('-SNAPSHOT') || version.endsWith('.SNAPSHOT')
 
@@ -27,9 +27,9 @@ repositories {
 
 ext {
     versions = [
-            'spring-boot.version'           : '2.5.0',
-            'spring-framework.version'      : '5.3.7',
-            'spring-data-jdbc.version'      : '2.2.1',
+            'spring-boot.version'           : '2.4.0',
+            'spring-framework.version'      : '5.3.1',
+            'spring-data-jdbc.version'      : '2.1.1',
             'spring-dynamic-commons.version': '2.0.0'
     ]
     managedVersions = [
