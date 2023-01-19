@@ -5,6 +5,7 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.jdbc.core.convert.JdbcConverter;
 import org.springframework.data.jdbc.repository.QueryMappingConfiguration;
+import org.springframework.data.jdbc.repository.query.StringBasedJdbcQuery;
 import org.springframework.data.jdbc.repository.support.DynamicOpenJdbcQueryLookupStrategy;
 import org.springframework.data.mapping.callback.EntityCallbacks;
 import org.springframework.data.projection.ProjectionFactory;
@@ -20,6 +21,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 /**
  * {@link QueryLookupStrategy} that tries to detect a dynamic query declared via {@link DynamicQuery} annotation.
@@ -45,14 +47,16 @@ public class DynamicJdbcQueryLookupStrategy extends DynamicOpenJdbcQueryLookupSt
 
     @Override
     public RepositoryQuery resolveQuery(Method method, RepositoryMetadata metadata, ProjectionFactory factory, NamedQueries namedQueries) {
-        if (isMethodDynamicJpaHandle(method)) {
+        if (isDynamicQueryMethod(method)) {
             DynamicJdbcQueryMethod queryMethod = new DynamicJdbcQueryMethod(method, metadata, factory, namedQueries, context);
-            return new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper,
+            StringBasedJdbcQuery query = new DynamicJdbcRepositoryQuery(queryMethod, getOperations(), this::createMapper,
                     getConverter(), evaluationContextProvider);
+            query.setBeanFactory(this.getBeanFactory());
+            return query;
         } else return jdbcQueryLookupStrategy.resolveQuery(method, metadata, factory, namedQueries);
     }
 
-    private boolean isMethodDynamicJpaHandle(Method method) {
+    private boolean isDynamicQueryMethod(Method method) {
         DynamicQuery annotation = method.getAnnotation(DynamicQuery.class);
         return annotation != null;
     }

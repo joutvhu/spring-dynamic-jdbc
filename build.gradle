@@ -29,8 +29,8 @@ ext {
     versions = [
             'spring-boot.version'           : '3.0.0',
             'spring-framework.version'      : '6.0.2',
-            'spring-dynamic-commons.version': '2.0.0',
-            'commons-lang3.version'         : '3.12.0'
+            'spring-data-jdbc.version'      : '3.0.0',
+            'spring-dynamic-commons.version': '2.0.0'
     ]
     managedVersions = [
             'org.springframework:spring-aspects'          : 'spring-framework.version',
@@ -38,9 +38,8 @@ ext {
             'org.springframework:spring-jcl'              : 'spring-framework.version',
             'org.springframework:spring-context-support'  : 'spring-framework.version',
             'org.springframework.data:spring-data-commons': 'spring-boot.version',
-            'org.springframework.data:spring-data-jdbc'   : 'spring-boot.version',
-            'com.github.joutvhu:spring-dynamic-commons'   : 'spring-dynamic-commons.version',
-            'org.apache.commons:commons-lang3'            : 'commons-lang3.version'
+            'org.springframework.data:spring-data-jdbc'   : 'spring-data-jdbc.version',
+            'com.github.joutvhu:spring-dynamic-commons'   : 'spring-dynamic-commons.version'
     ]
     otherVersions = [
             'org.springframework.boot:spring-boot-dependencies': 'spring-boot.version'
@@ -132,7 +131,7 @@ artifacts {
 test {
     useJUnitPlatform()
     filter {
-        includeTestsMatching 'com.joutvhu.dynamic.jpa.*'
+        includeTestsMatching 'com.joutvhu.dynamic.jdbc.*'
     }
 }
 
@@ -147,11 +146,11 @@ publishing {
             pom {
                 name = project.name
                 description = 'The Spring Dynamic JDBC will make it easy to implement dynamic queries with Spring Data JDBC'
-                url = 'https://github.com/joutvhu/spring-dynamic-jpa'
+                url = 'https://github.com/joutvhu/spring-dynamic-jdbc'
                 licenses {
                     license {
                         name = 'MIT License'
-                        url = 'https://github.com/joutvhu/spring-dynamic-jpa/blob/main/LICENSE'
+                        url = 'https://github.com/joutvhu/spring-dynamic-jdbc/blob/main/LICENSE'
                     }
                 }
                 developers {
@@ -162,13 +161,13 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:git@github.com:joutvhu/spring-dynamic-jpa.git'
-                    developerConnection = 'scm:git:git@github.com:joutvhu/spring-dynamic-jpa.git'
-                    url = 'https://github.com/joutvhu/spring-dynamic-jpa'
+                    connection = 'scm:git:git@github.com:joutvhu/spring-dynamic-jdbc.git'
+                    developerConnection = 'scm:git:git@github.com:joutvhu/spring-dynamic-jdbc.git'
+                    url = 'https://github.com/joutvhu/spring-dynamic-jdbc'
                 }
                 issueManagement {
                     system = 'Github Issue'
-                    url = 'https://github.com/joutvhu/spring-dynamic-jpa/issues'
+                    url = 'https://github.com/joutvhu/spring-dynamic-jdbc/issues'
                 }
                 organization {
                     name = 'Giao Ho'
@@ -216,7 +215,7 @@ publishing {
         }
         maven {
             name = 'github'
-            url = "https://maven.pkg.github.com/joutvhu/spring-dynamic-jpa"
+            url = "https://maven.pkg.github.com/joutvhu/spring-dynamic-jdbc"
             credentials {
                 username = project.githubUsername
                 password = project.githubPassword

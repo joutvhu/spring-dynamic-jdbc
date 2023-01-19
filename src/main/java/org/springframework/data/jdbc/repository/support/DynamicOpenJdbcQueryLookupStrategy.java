@@ -10,6 +10,7 @@ import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.data.repository.query.QueryMethodEvaluationContextProvider;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
+import org.springframework.lang.Nullable;
 
 public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookupStrategy {
     public DynamicOpenJdbcQueryLookupStrategy(
@@ -34,5 +35,10 @@ public abstract class DynamicOpenJdbcQueryLookupStrategy extends JdbcQueryLookup
     @Override
     public RowMapper<Object> createMapper(Class<?> returnedObjectType) {
         return super.createMapper(returnedObjectType);
+    }
+
+    @Override
+    public BeanFactory getBeanFactory() {
+        return super.getBeanFactory();
     }
 }

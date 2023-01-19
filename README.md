@@ -22,6 +22,11 @@ implementation 'com.github.joutvhu:spring-dynamic-jdbc:3.0.0'
 
   | Spring Boot version | Spring Dynamic JDBC version |
   |:----------:|:-------------:|
+  | 2.3.x.RELEASE | 2.0.0 |
+  | 2.4.x | 2.1.0 |
+  | 2.5.x | 2.2.0 |
+  | 2.6.x | 2.3.0 |
+  | 2.7.x | 2.4.0 |
   | 3.0.x | 3.0.0 |
 
 Also, you have to choose a [Dynamic Query Template Provider](https://github.com/joutvhu/spring-dynamic-commons#dynamic-query-template-provider) to use,
@@ -141,7 +146,7 @@ select * from USER
 - Now you don't need to specify the query template on `@DynamicQuery` annotation.
 
 ```java
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends CrudRepository<User, Long> {
     @DynamicQuery
     List<User> findUserByNames(Long firstName, String lastName);
 

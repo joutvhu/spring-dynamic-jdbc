@@ -26,9 +26,9 @@ import java.nio.charset.StandardCharsets;
         transactionManagerRef = "transactionManager",
         repositoryFactoryBeanClass = DynamicJdbcRepositoryFactoryBean.class
 )
-public class JpaDynamicApplication {
+public class JdbcDynamicApplication {
     public static void main(String[] args) {
-        SpringApplication.run(JpaDynamicApplication.class);
+        SpringApplication.run(JdbcDynamicApplication.class);
     }
 
     @Bean
