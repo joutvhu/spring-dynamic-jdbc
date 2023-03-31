@@ -24,4 +24,7 @@ public interface TableBRepository extends CrudRepository<TableB, Long> {
             "  where FIELD_E = :fieldC\n" +
             "</#if>")
     List<TableB> findB4(Long fieldA, String fieldC);
+
+    @DynamicQuery(name = "findTableBByFieldD")
+    List<TableB> findB5(Long fieldD);
 }
