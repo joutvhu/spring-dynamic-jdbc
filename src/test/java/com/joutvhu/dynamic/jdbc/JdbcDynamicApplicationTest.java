@@ -139,6 +139,12 @@ public class JdbcDynamicApplicationTest {
     }
 
     @Test
+    public void findB5() {
+        List<TableB> result = tableBRepository.findB5(12042107L);
+        Assertions.assertEquals(1, result.size());
+    }
+
+    @Test
     public void findC1() {
         List<Long> c = new ArrayList<>();
         c.add(101L);

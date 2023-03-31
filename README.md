@@ -7,14 +7,14 @@ The Spring Dynamic JDBC will make it easy to implement dynamic queries with Spri
 ### Install dependency
 
 ```groovy
-implementation 'com.github.joutvhu:spring-dynamic-jdbc:3.0.0'
+implementation 'com.github.joutvhu:spring-dynamic-jdbc:3.0.1'
 ```
 
 ```xml
 <dependency>
     <groupId>com.github.joutvhu</groupId>
     <artifactId>spring-dynamic-jdbc</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1</version>
 </dependency>
 ```
 
@@ -22,12 +22,12 @@ implementation 'com.github.joutvhu:spring-dynamic-jdbc:3.0.0'
 
   | Spring Boot version | Spring Dynamic JDBC version |
   |:----------:|:-------------:|
-  | 2.3.x.RELEASE | 2.0.0 |
-  | 2.4.x | 2.1.0 |
-  | 2.5.x | 2.2.0 |
-  | 2.6.x | 2.3.0 |
-  | 2.7.x | 2.4.0 |
-  | 3.0.x | 3.0.0 |
+  | 2.3.x.RELEASE | 2.0.1 |
+  | 2.4.x | 2.1.1 |
+  | 2.5.x | 2.2.1 |
+  | 2.6.x | 2.3.1 |
+  | 2.7.x | 2.4.1 |
+  | 3.0.x | 3.0.1 |
 
 Also, you have to choose a [Dynamic Query Template Provider](https://github.com/joutvhu/spring-dynamic-commons#dynamic-query-template-provider) to use,
 the Dynamic Query Template Provider will decide the style you write dynamic query template.
@@ -112,8 +112,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
 - Each template will start with a template name definition line. The template name definition line must be start with two dash characters (`--`). The template name will have the following syntax.
 
   ```
-  entityName:methodName
+  queryMethodName
   ```
+
+  - `queryMethodName` can be provided through field `@DynamicQuery.name`. If `@DynamicQuery.name` is not provided, `queryMethodName` will be `entityName:methodName` where `entityName` is entity class name, `methodName` is query method name
 
 - Query templates (Ex: `resoucers/query/user-query.dsql`) 
 
@@ -141,6 +143,17 @@ select * from USER
 <#if group.name?starts_with("Git")>
   where GROUP_ID = :#{#group.id}
 </#if>
+
+-- get_user_by_username_and_email
+select * from USER
+<@where>
+  <#if username??>
+    and USERNAME = :username
+  </#if>
+  <#if email??>
+    and EMAIL = :email
+  </#if>
+</@where>
 ```
 
 - Now you don't need to specify the query template on `@DynamicQuery` annotation.
@@ -161,5 +174,8 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     @DynamicQuery
     List<User> findByGroup(Group group);
+
+    @DynamicQuery(name = "get_user_by_username_and_email")
+    List<User> getUserWithUsernameAndEmail(String username, String email);
 }
 ```
